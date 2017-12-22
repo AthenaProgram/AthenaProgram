@@ -6,12 +6,12 @@ cc.Class({
     },
 
     onLoad: function () {
-        this.player = this.node.getChildByName('player');
+        this.sexylady = this.node.getChildByName('sexylady');
         var self = this;
         cc.eventManager.addListener({
             event: cc.EventListener.KEYBOARD,
             onKeyPressed: function(keyCode, event) {
-                var newTile = cc.p(self.playerTile.x, self.playerTile.y);
+                var newTile = cc.p(self.sexyladyTile.x, self.sexyladyTile.y);
                 switch(keyCode) {
                     case cc.KEY.up:
                         newTile.y -= 1;
@@ -33,6 +33,7 @@ cc.Class({
 
             }
         },self);
+        this.loadMap();
     },
 
 
@@ -49,20 +50,20 @@ cc.Class({
 
         this.tryCatchStar(newTile);
 
-        this.playerTile = newTile;
+        this.sexyladyTile = newTile;
         this.updatePlayerPos();
 
-        if (cc.pointEqualToPoint(this.playerTile, this.endTile)) {
+        if (cc.pointEqualToPoint(this.sexyladyTile, this.endTile)) {
             cc.log('succeed');
         }
     },
 
     tryCatchStar: function(newTile){
-        var GID = this.stars.getTileGIDAt(newTile);
+        var GID = this.grass.getTileGIDAt(newTile);
         var prop = this.tiledMap.getPropertiesForGID(GID);
-        if(prop.isStar)
+        if(prop.isGrass)
         {
-            this.stars.removeTileAt(newTile);
+            this.grass.removeTileAt(newTile);
         }
     },
 
@@ -72,21 +73,21 @@ cc.Class({
         this.node.setPosition(cc.visibleRect.bottomLeft);
         //地图
         this.tiledMap = this.node.getComponent(cc.TiledMap);
-        //players对象层
-        var players = this.tiledMap.getObjectGroup('players');
+        //player对象层
+        var player = this.tiledMap.getObjectGroup('player');
         //startPoint和endPoint对象
-        var startPoint = players.getObject('startPoint');
-        var endPoint = players.getObject('endPoint');
+        var startPoint = player.getObject('startPoint');
+        var endPoint = player.getObject('endPoint');
         //像素坐标
         var startPos = cc.p(startPoint.x, startPoint.y);
         var endPos = cc.p(endPoint.x, endPoint.y);
         //障碍物图层和星星图层
         this.wall = this.tiledMap.getLayer('wall');
-        this.stars = this.tiledMap.getLayer('stars');
+        this.grass = this.tiledMap.getLayer('grass');
         //出生Tile和结束Tile
-        this.playerTile = this.startTile = this.getTilePos(startPos);
+        this.sexyladyTile = this.startTile = this.getTilePos(startPos);
         this.endTile = this.getTilePos(endPos);
-        //更新player位置
+        //更新sexylady位置
         this.updatePlayerPos();
 
     },
@@ -102,8 +103,8 @@ cc.Class({
 
 
     updatePlayerPos: function() {
-        var pos = this.wall.getPositionAt(this.playerTile);
-        this.player.setPosition(pos);
+        var pos = this.grass.getPositionAt(this.sexyladyTile);
+        this.sexylady.setPosition(pos);
     },
 
 });

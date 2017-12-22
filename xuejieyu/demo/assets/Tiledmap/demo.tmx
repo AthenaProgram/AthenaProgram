@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="2017.12.07" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="50" tileheight="50" infinite="0" nextobjectid="17">
+<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="50" tileheight="50" infinite="0" nextobjectid="21">
  <tileset firstgid="1" name="grass" tilewidth="50" tileheight="50" tilecount="1" columns="1">
-  <image source="./grass.png" width="50" height="50"/>
+  <image source="./element/grass.png" width="50" height="50"/>
  </tileset>
  <tileset firstgid="2" name="road" tilewidth="50" tileheight="50" tilecount="1" columns="1">
-  <image source="./road.png" width="50" height="50"/>
+  <image source="./element/road.png" width="50" height="50"/>
  </tileset>
  <tileset firstgid="3" name="wall" tilewidth="50" tileheight="50" tilecount="1" columns="1">
-  <image source="./wall.png" width="50" height="50"/>
+  <image source="./element/wall.png" width="50" height="50"/>
  </tileset>
  <tileset firstgid="4" name="diamond" tilewidth="50" tileheight="50" tilecount="1" columns="1">
-  <image source="./diamond.png" width="50" height="50"/>
+  <image source="./element/diamond.png" width="50" height="50"/>
  </tileset>
  <tileset firstgid="5" name="wow" tilewidth="50" tileheight="50" tilecount="1" columns="1">
-  <image source="./rock.png" width="50" height="50"/>
+  <image source="./element/rock.png" width="50" height="50"/>
  </tileset>
  <layer name="Ground" width="30" height="30">
   <data encoding="csv">
@@ -118,6 +118,9 @@
 </data>
  </layer>
  <layer name="grass" width="30" height="30">
+  <properties>
+   <property name="isGrass" type="bool" value="true"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -152,6 +155,7 @@
 </data>
  </layer>
  <objectgroup name="player">
-  <object id="16" gid="5" x="-3.78788" y="591.667" width="50" height="50"/>
+  <object id="19" name="startPoint" gid="5" x="-3.78788" y="546.212" width="50" height="50"/>
+  <object id="20" name="endPoint" gid="5" x="1347.73" y="894.697" width="50" height="50"/>
  </objectgroup>
 </map>
