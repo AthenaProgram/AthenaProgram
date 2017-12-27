@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="90" tileheight="90" infinite="0" nextobjectid="6">
+ <tileset firstgid="1" name="element" tilewidth="90" tileheight="90" tilecount="48" columns="6">
+  <image source="./map.png" width="540" height="720"/>
+ </tileset>
+ <layer name="ground" width="30" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztwwENAAAMw6DKmX+FF3JIWDVVVVXfPSZSjKE=
+  </data>
+ </layer>
+ <layer name="barrier" width="30" height="30">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AU0Atoo2F62ouNPZzsxRW2tA5zYswcavaihxmpYYisjp7pDd0Ng91eSsOZFLOINXcohBtMPbX8S2rapjYYifZSGm+jYBSMAuoCAIZLDh0=
+  </data>
+ </layer>
+ <layer name="grass" width="30" height="30">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRMAqGDlAjgGlpJ7F8WtlLqjyldpMjRw17sZlPS7+i26GGxqcXoHU6HgWjYBSMAmwAAC97BME=
+  </data>
+ </layer>
+ <layer name="prefab" width="30" height="30">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRQAnQRKNxiY2CoQ9UoRgXn9b2ouPhai82u+kNBsLOUTAKRsEoGAgAAAwIA64=
+  </data>
+ </layer>
+ <objectgroup name="bornNexit">
+  <object id="2" gid="42" x="-2.57576" y="1345" width="90" height="90"/>
+  <object id="4" gid="39" x="1888.33" y="1620.76" width="90" height="90"/>
+ </objectgroup>
+</map>
