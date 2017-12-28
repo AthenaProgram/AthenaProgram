@@ -25,12 +25,18 @@ cc.Class({
         this.destroyOnPlayerTouch = false;
         this.autoFalling = false;
         this.moveTarget = null;
-        this.autoMoveSpeed = 0;
+        this.playerMoving = false;
+        this.creepsDirectionX = 0;
+        this.creepsDirectionY = 0;
+        this.cannotMove = false;
 
         this.x = 0;
         this.y = 0;
+        this.blinkTime = 0;
 
-        this.playerMoveSeconds = 0.1
+        this.playerMoveSeconds = 0.1;
+        this.leftMoveSeconds = 0;
+        this.cachePropertyList = [];
     },
      
     setInputControl: function () {
@@ -95,10 +101,59 @@ cc.Class({
                     this.onPlayerMoveDone();                    
                 }
             }
+            if(this.blinkTime > 0)
+            {
+                if(this.blinkTime > dt)
+                {
+                    this.blinkTime -= dt;
+                    this.node.opacity = 255 - this.node.opacity;
+                }
+                else
+                {
+                    this.blinkTime = 0
+                    this.node.opacity = 255;                 
+                }
+            }
         }
         else
         {
+            if(this.creepsSpeedPerSeconds)
+            {
+                if(!this.cannotMove)
+                {
+                    var px = this.node.position.x + this.creepsSpeedPerSeconds * dt * this.creepsDirectionX;
+                    var py = this.node.position.y + this.creepsSpeedPerSeconds * dt * this.creepsDirectionY;
 
+                    var target_px = (this.x + this.creepsDirectionX) * 52;
+                    var target_py = (this.y + this.creepsDirectionY) * 52;
+
+                    //if(this.canMove(this.creepsDirectionX, this.creepsDirectionY))
+                    //{
+                        if((target_px - px) * this.creepsDirectionX < 0 || (target_py - py) * this.creepsDirectionY < 0)
+                        {
+                            this.x += this.creepsDirectionX;
+                            this.y += this.creepsDirectionY;
+                            this.node.setPosition(px, py);
+                            if(!this.canMove(this.creepsDirectionX, this.creepsDirectionY))
+                            {
+                                this.creepsDirectionX *= -1;
+                                this.creepsDirectionY *= -1;
+                                this.node.setPosition(2 * target_px - px, 2 * target_py - py);
+                            }
+                        }
+                        else
+                        {
+                            this.node.setPosition(px, py);
+                        }
+                    //}
+                    /*else
+                    {
+                        this.creepsDirectionX *= -1;
+                        this.creepsDirectionY *= -1;
+                        this.node.setPosition(2 * target_px - px, 2 * target_py - py);
+                    }*/
+                }
+            }
         }
     },
 
@@ -106,7 +161,7 @@ cc.Class({
     {
         if(this.playerMoving == false && this.aceeptNewClick)
         {
-            if(this.canMovePlayer(dx, dy))
+            if(this.canMove(dx, dy))
             {
                 this.aceeptNewClick = false;
                 this.playerMoving = true;
@@ -119,8 +174,9 @@ cc.Class({
         }
     },
 
-    initialize: function(type)
+    initialize: function(config)
     {
+        var type = config[0];
         this.node.getComponent(cc.Sprite).spriteFrame = this.spriteFrames[type];
         this.dynamicType = type;
         switch (type)
@@ -135,7 +191,7 @@ cc.Class({
                 this.setAsGrass();
                 break;
             case 3:
-                this.setAsGreenSnake();
+                this.setAsGreenSnake(config);
                 break;
         }
     },
@@ -144,6 +200,44 @@ cc.Class({
     {
         this.playerMoving = false;
         this.aceeptNewClick = true;
+        this.canMove = function(dx, dy)
+        {
+            if(!cc.availablePosMap[(this.x + dx) + "+" + (this.y + dy)])
+            {
+                console.log("can't move!");
+                return false;
+            }
+            var nodeList = this.node.parent.getComponent("dynamicSquare").dynamicNodeList;
+            for(var i = 0; i < nodeList.length; i ++)
+            {
+                var node = nodeList[i];
+                var spt = node.getComponent("dynamicNode");
+                if(node != this.node)
+                {
+                    if(spt.x == this.x + dx)
+                    {
+                        if(spt.y == this.y + dy)
+                        {
+                            if(!spt.canMoveByPlayer && !spt.destroyOnPlayerTouch)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        this.touchWith = function(spt)
+        {
+            if(spt.dynamicType == 3 && this.blinkTime <= 0)
+            {
+                console.log("Holy Shit!");
+                this.blinkTime = 1;
+            }
+        }
         this.setInputControl();
     },
 
@@ -153,10 +247,12 @@ cc.Class({
         this.destroyOnPlayerTouch = false;
         this.autoFalling = false;
         this.moveTarget = null;
-        this.autoMoveSpeed = 0;
-        this.touchedByPlayer = function()
+        this.touchWith = function(spt)
         {
-            console.log("what happened?");
+            if(spt.dynamicType == 0)
+            {
+                console.log("what happened?");
+            }
         }
     },
 
@@ -166,26 +262,65 @@ cc.Class({
         this.destroyOnPlayerTouch = true;
         this.autoFalling = false;
         this.moveTarget = null;
-        this.autoMoveSpeed = 0;
-        this.touchedByPlayer = function()
+        this.touchWith = function(spt)
         {
-            console.log("A grass has been destroyed")
-            this.node.parent.getComponent("dynamicSquare").removeNodeFromList(this.node);
-            this.node.destroy();
+            if(spt.dynamicType == 0)
+            {
+                
+                console.log("A grass has been destroyed")
+                this.node.parent.getComponent("dynamicSquare").removeNodeFromList(this.node);
+                this.node.destroy();
+            }
         }
     },
 
-    setAsGreenSnake: function()
+    setAsGreenSnake: function(config)
     {
+        this.canMoveByPlayer = false;
+        this.destroyOnPlayerTouch = true;
+        this.autoFalling = false;
+        this.moveTarget = null;
+        this.creepsDirectionX = config[3];
+        this.creepsDirectionY = config[4];
+        this.creepsSpeedPerSeconds = 104;
+        this.touchWith = function(spt)
+        {
+            
+        },
+        this.canMove = function(dx, dy)
+        {
+            if(!cc.availablePosMap[(this.x + dx) + "+" + (this.y + dy)])
+            {
+                return false;
+            }
+            var nodeList = this.node.parent.getComponent("dynamicSquare").dynamicNodeList;
+            for(var i = 0; i < nodeList.length; i ++)
+            {
+                var node = nodeList[i];
+                var spt = node.getComponent("dynamicNode");
+                if(node != this.node)
+                {
+                    if(spt.x == this.x + dx)
+                    {
+                        if(spt.y == this.y + dy)
+                        {
+                            if(spt.dynamicType == 1 || spt.dynamicType == 2)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
 
+            return true;
+        }
     },
 
     onPlayerMoveDone: function()
     {
-        console.log("onPlayerMoveDone");
         this.node.setPosition(this.moveEnd);
         //this.node.parent.parent.setPosition(cc.p(-this.playerEndX * 52, -this.playerEndY * 52));
-        console.log(cc.p((this.x - this.playerEndX) * 52, (this.y - this.playerEndY) * 52));
         this.playerMoving = false;
         this.x = this.playerEndX;
         this.y = this.playerEndY;
@@ -223,47 +358,34 @@ cc.Class({
         }
     },
 
-    touchWith: function(spt)
+/*    touchWith: function(spt)
     {
         console.log("dynamicNode.touchWith")
         if(spt.dynamicType == 0)
         {
             this.touchedByPlayer();
         }
-    },
+    },*/
 
     checkFloating: function()
     {
 
     },
 
-    canMovePlayer: function(dx, dy)
+    getCacheData: function() //without position
     {
-        if(!cc.availablePosMap[(this.x + dx) + "+" + (this.y + dy)])
+        var data = [];
+        for(var i = 0; i < this.cachePropertyList.length; i++)
         {
-            console.log("can't move!");
-            return false;
+            data.push(this[this.cachePropertyList[i]]);
         }
-        var nodeList = this.node.parent.getComponent("dynamicSquare").dynamicNodeList;
-        for(var i = 0; i < nodeList.length; i ++)
-        {
-            var node = nodeList[i];
-            var spt = node.getComponent("dynamicNode");
-            if(node != this.node)
-            {
-                if(spt.x == this.x + dx)
-                {
-                    if(spt.y == this.y + dy)
-                    {
-                        if(!spt.canMoveByPlayer && !spt.destroyOnPlayerTouch)
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
+    },
 
-        return true;
+    loadFromCacheData: function(data)
+    {
+        for(var i = 0; i < data.length; i++)
+        {
+            this[this.cachePropertyList[i]] = data[i];
+        }
     }
 });

@@ -77,6 +77,11 @@ cc.Class({
         config.push([1, -1, -1]);
         config.push([1, -8, -7]);
         config.push([1, -7, -7]);
+        config.push([2, -2, 1]);
+        config.push([3, 0, 1, 1, 0]);
+        config.push([3, 1, 2, 0, 1]);
+        config.push([2, 1, 4]);
+        config.push([1, 1, 5]);
         return config;
     }
     // update (dt) {},

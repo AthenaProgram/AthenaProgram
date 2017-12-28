@@ -41,7 +41,7 @@ cc.Class({
         spt.x = configItem[1];
         spt.y = configItem[2];
         go.setPosition(cc.p(configItem[1] * 52, configItem[2] * 52));
-        spt.initialize(configItem[0]);
+        spt.initialize(configItem);
         console.log("instantiateDynamicPrefab");
         this.dynamicNodeList.push(go);
     },
