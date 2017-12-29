@@ -20,6 +20,8 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
+        this.dynParentSpt = null;
+
         this.dynamicType = null;
         this.canMoveByPlayer = false;
         this.destroyOnPlayerTouch = false;
@@ -59,6 +61,10 @@ cc.Class({
                     case cc.KEY.s:
                         self.tryMovePlayer(0, -1);
                         break;
+                    case cc.KEY.i:
+                        self.trySave();
+                    case cc.KEY.l:
+                        self.tryLoad();
                 }
             },
             // 松开按键时，停止向该方向的加速
@@ -127,31 +133,22 @@ cc.Class({
                     var target_px = (this.x + this.creepsDirectionX) * 52;
                     var target_py = (this.y + this.creepsDirectionY) * 52;
 
-                    //if(this.canMove(this.creepsDirectionX, this.creepsDirectionY))
-                    //{
-                        if((target_px - px) * this.creepsDirectionX < 0 || (target_py - py) * this.creepsDirectionY < 0)
-                        {
-                            this.x += this.creepsDirectionX;
-                            this.y += this.creepsDirectionY;
-                            this.node.setPosition(px, py);
-                            if(!this.canMove(this.creepsDirectionX, this.creepsDirectionY))
-                            {
-                                this.creepsDirectionX *= -1;
-                                this.creepsDirectionY *= -1;
-                                this.node.setPosition(2 * target_px - px, 2 * target_py - py);
-                            }
-                        }
-                        else
-                        {
-                            this.node.setPosition(px, py);
-                        }
-                    //}
-                    /*else
+                    if((target_px - px) * this.creepsDirectionX < 0 || (target_py - py) * this.creepsDirectionY < 0)
                     {
-                        this.creepsDirectionX *= -1;
-                        this.creepsDirectionY *= -1;
-                        this.node.setPosition(2 * target_px - px, 2 * target_py - py);
-                    }*/
+                        this.x += this.creepsDirectionX;
+                        this.y += this.creepsDirectionY;
+                        this.node.setPosition(px, py);
+                        if(!this.canMove(this.creepsDirectionX, this.creepsDirectionY))
+                        {
+                            this.creepsDirectionX *= -1;
+                            this.creepsDirectionY *= -1;
+                            this.node.setPosition(2 * target_px - px, 2 * target_py - py);
+                        }
+                    }
+                    else
+                    {
+                        this.node.setPosition(px, py);
+                    }
                 }
             }
         }
@@ -174,8 +171,9 @@ cc.Class({
         }
     },
 
-    initialize: function(config)
+    initialize: function(config, dynParentSpt)
     {
+        this.dynParentSpt = dynParentSpt;
         var type = config[0];
         this.node.getComponent(cc.Sprite).spriteFrame = this.spriteFrames[type];
         this.dynamicType = type;
@@ -207,7 +205,7 @@ cc.Class({
                 console.log("can't move!");
                 return false;
             }
-            var nodeList = this.node.parent.getComponent("dynamicSquare").dynamicNodeList;
+            var nodeList = this.dynParentSpt.dynamicNodeList;
             for(var i = 0; i < nodeList.length; i ++)
             {
                 var node = nodeList[i];
@@ -268,7 +266,7 @@ cc.Class({
             {
                 
                 console.log("A grass has been destroyed")
-                this.node.parent.getComponent("dynamicSquare").removeNodeFromList(this.node);
+                this.dynParentSpt.removeNodeFromList(this.node);
                 this.node.destroy();
             }
         }
@@ -293,7 +291,7 @@ cc.Class({
             {
                 return false;
             }
-            var nodeList = this.node.parent.getComponent("dynamicSquare").dynamicNodeList;
+            var nodeList = this.dynParentSpt.dynamicNodeList;
             for(var i = 0; i < nodeList.length; i ++)
             {
                 var node = nodeList[i];
@@ -317,6 +315,11 @@ cc.Class({
         }
     },
 
+    setAsSavePosition: function(config)
+    {
+
+    },
+
     onPlayerMoveDone: function()
     {
         this.node.setPosition(this.moveEnd);
@@ -336,7 +339,7 @@ cc.Class({
     checkInEndOfFrame: function()
     {
         //low
-        var nodeList = this.node.parent.getComponent("dynamicSquare").dynamicNodeList;
+        var nodeList = this.dynParentSpt.dynamicNodeList;
         for(var i = 0; i < nodeList.length; i ++)
         {
             var node = nodeList[i];
@@ -358,15 +361,6 @@ cc.Class({
         }
     },
 
-/*    touchWith: function(spt)
-    {
-        console.log("dynamicNode.touchWith")
-        if(spt.dynamicType == 0)
-        {
-            this.touchedByPlayer();
-        }
-    },*/
-
     checkFloating: function()
     {
 
@@ -387,5 +381,15 @@ cc.Class({
         {
             this[this.cachePropertyList[i]] = data[i];
         }
+    },
+
+    trySave: function()
+    {
+        this.dynParentSpt.cacheAllChildData();
+    }
+
+    tryLoad: function()
+    {
+        this.dynParentSpt.resetAllNodeFromCacheData();
     }
 });

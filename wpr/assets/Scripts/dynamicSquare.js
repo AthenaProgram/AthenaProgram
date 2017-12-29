@@ -41,7 +41,7 @@ cc.Class({
         spt.x = configItem[1];
         spt.y = configItem[2];
         go.setPosition(cc.p(configItem[1] * 52, configItem[2] * 52));
-        spt.initialize(configItem);
+        spt.initialize(configItem, this);
         console.log("instantiateDynamicPrefab");
         this.dynamicNodeList.push(go);
     },
@@ -78,5 +78,34 @@ cc.Class({
     lateUpdate(dt)
     {
 
+    },
+
+    cacheAllChildData: function()
+    {
+        this.cachedData = [];
+        for(var i = 0; i < this.dynamicNodeList.length; i ++)
+        {
+            var node = this.dynamicNodeList[i];
+            var d = node.getComponent("DynamicNode").getCacheData()
+            this.cachedData.push(d);
+        }
+    },
+
+    resetAllNodeFromCacheData: function()
+    {
+        if(this.cachedData)
+        {
+
+        }
+        else
+        {
+            this.ShowToast("no cache data");
+        }
+    },
+
+    ShowToast: function(msg)
+    {
+        //test
+        console.log(msg);
     }
 });
