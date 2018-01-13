@@ -1,32 +1,7 @@
-// Learn cc.Class:
-//  - [Chinese] http://www.cocos.com/docs/creator/scripting/class.html
-//  - [English] http://www.cocos2d-x.org/docs/editors_and_tools/creator-chapters/scripting/class/index.html
-// Learn Attribute:
-//  - [Chinese] http://www.cocos.com/docs/creator/scripting/reference/attributes.html
-//  - [English] http://www.cocos2d-x.org/docs/editors_and_tools/creator-chapters/scripting/reference/attributes/index.html
-// Learn life-cycle callbacks:
-//  - [Chinese] http://www.cocos.com/docs/creator/scripting/life-cycle-callbacks.html
-//  - [English] http://www.cocos2d-x.org/docs/editors_and_tools/creator-chapters/scripting/life-cycle-callbacks/index.html
-
 cc.Class({
     extends: cc.Component,
 
     properties: {
-        // foo: {
-        //     // ATTRIBUTES:
-        //     default: null,        // The default value will be used only when the component attaching
-        //                           // to a node for the first time
-        //     type: cc.SpriteFrame, // optional, default is typeof default
-        //     serializable: true,   // optional, default is true
-        // },
-        // bar: {
-        //     get () {
-        //         return this._bar;
-        //     },
-        //     set (value) {
-        //         this._bar = value;
-        //     }
-        // },
         dynamicNode:{
             default:null,
             type:cc.Prefab,
@@ -41,25 +16,45 @@ cc.Class({
         spt.x = configItem[1];
         spt.y = configItem[2];
         go.setPosition(cc.p(configItem[1] * 52, configItem[2] * 52));
-        spt.initialize(configItem, this);
-        console.log("instantiateDynamicPrefab");
+        spt.initialize(configItem);
+        spt.dynParentSpt = this;
         this.dynamicNodeList.push(go);
+        this.dynamicSptList.push(spt);
+    },
+
+    loadDynamicPrefab: function(cacheData)
+    {
+        var position = cacheData.position;
+        var d = cacheData.data;
+        var dynamicType = cacheData.dynamicType;
+        var go = cc.instantiate(this.dynamicNode);
+        var spt = go.getComponent("dynamicNode");
+        this.node.addChild(go)
+        go.setPosition(position);
+        spt.dynParentSpt = this;
+        spt.setSprite(dynamicType);
+        spt.dynamicType = dynamicType;
+        this.dynamicNodeList.push(go);
+        this.dynamicSptList.push(spt);
+        spt.bindAll();
+        spt.loadFromCacheData(d);
     },
 
     initialize: function(dynamicConfig)
     {
         this.dynamicNodeList = [];
+        this.dynamicSptList = [];
         for(var i = 0; i < dynamicConfig.length; i ++)
         {
             this.instantiateDynamicPrefab(dynamicConfig[i])
         }
     },
 
-    //onLoad () {},
-
     start () {
-        console.log("dynamicSquare.start");
-        
+        cc.dump = function(v)
+        {
+            console.log(typeof(v) + ":" + JSON.stringify(v));
+        }
     },
 
     removeNodeFromList: function(dynamicNode)
@@ -70,14 +65,15 @@ cc.Class({
             if(node == dynamicNode)
             {
                 this.dynamicNodeList.splice(i, 1);
+                this.dynamicSptList.splice(i, 1);
                 break;
             }
         }
     },
-    // update (dt) {},
+
     lateUpdate(dt)
     {
-
+        this.checkInEndOfFrame();
     },
 
     cacheAllChildData: function()
@@ -86,26 +82,81 @@ cc.Class({
         for(var i = 0; i < this.dynamicNodeList.length; i ++)
         {
             var node = this.dynamicNodeList[i];
-            var d = node.getComponent("DynamicNode").getCacheData()
-            this.cachedData.push(d);
+            var d = this.dynamicSptList[i].getCacheData();
+            var cache = {};
+            cache.data = d;
+            cc.dump(d)
+            cache.dynamicType = this.dynamicSptList[i].dynamicType
+            cache.position = node.position;
+            this.cachedData.push(cache);
         }
+        cc.dump("-----cachedData:-----");
+        cc.dump(this.cachedData);
     },
 
     resetAllNodeFromCacheData: function()
     {
+        this.clearAllNode();
         if(this.cachedData)
         {
-
+            for(var i = 0; i < this.cachedData.length; i ++)
+            {
+                var cacheData = this.cachedData[i];
+                this.loadDynamicPrefab(cacheData);
+            }
         }
         else
         {
-            this.ShowToast("no cache data");
+            this.alert("no cache data");
         }
     },
 
-    ShowToast: function(msg)
+    alert: function(msg)
     {
         //test
         console.log(msg);
+    },
+
+    checkInEndOfFrame: function()
+    {
+        //low
+        this.currPosMap = {};
+        var sptList = this.dynamicSptList;
+        for(var i = 0; i < sptList.length; i ++)
+        {
+            var spt = sptList[i];
+            if(!this.currPosMap[spt.x + "+" + spt.y])
+            {
+                this.currPosMap[spt.x + "+" + spt.y] = [];
+            }
+            this.currPosMap[spt.x + "+" + spt.y].push(spt);
+        }
+        for(var p in this.currPosMap)
+        {
+            if(this.currPosMap[p].length > 1)
+            {
+                for(var i = 0; i < this.currPosMap[p].length; i ++)
+                {
+                    for(var j = 0; j < this.currPosMap[p].length; j ++)
+                    {
+                        if(i != j)
+                        {
+                            this.currPosMap[p][i].touchWith(this.currPosMap[p][j]);
+                        }
+                    }
+                }
+            }
+        }
+    },
+    
+    clearAllNode: function()
+    {
+        for(var i = 0; i < this.dynamicNodeList.length; i ++)
+        {
+            var node = this.dynamicNodeList[i];
+            node.destroy();
+        }
+        this.dynamicNodeList = [];
+        this.dynamicSptList = [];
     }
 });

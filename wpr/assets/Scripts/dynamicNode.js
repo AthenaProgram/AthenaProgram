@@ -1,12 +1,3 @@
-// Learn cc.Class:
-//  - [Chinese] http://www.cocos.com/docs/creator/scripting/class.html
-//  - [English] http://www.cocos2d-x.org/docs/editors_and_tools/creator-chapters/scripting/class/index.html
-// Learn Attribute:
-//  - [Chinese] http://www.cocos.com/docs/creator/scripting/reference/attributes.html
-//  - [English] http://www.cocos2d-x.org/docs/editors_and_tools/creator-chapters/scripting/reference/attributes/index.html
-// Learn life-cycle callbacks:
-//  - [Chinese] http://www.cocos.com/docs/creator/scripting/life-cycle-callbacks.html
-//  - [English] http://www.cocos2d-x.org/docs/editors_and_tools/creator-chapters/scripting/life-cycle-callbacks/index.html
 cc.Class({
     extends: cc.Component,
 
@@ -16,8 +7,6 @@ cc.Class({
             type: cc.SpriteFrame,
         },
     },
-
-    // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
         this.dynParentSpt = null;
@@ -43,10 +32,8 @@ cc.Class({
      
     setInputControl: function () {
         var self = this;
-        // 添加键盘事件监听
         cc.eventManager.addListener({
             event: cc.EventListener.KEYBOARD,
-            // 有按键按下时，判断是否是我们指定的方向控制键，并设置向对应方向加速
             onKeyPressed: function(keyCode, event) {
                 switch(keyCode) {
                     case cc.KEY.a:
@@ -63,11 +50,12 @@ cc.Class({
                         break;
                     case cc.KEY.i:
                         self.trySave();
+                        break;
                     case cc.KEY.l:
                         self.tryLoad();
+                        break;
                 }
             },
-            // 松开按键时，停止向该方向的加速
             onKeyReleased: function(keyCode, event) {
                 switch(keyCode) {
                     case cc.KEY.a:
@@ -92,7 +80,7 @@ cc.Class({
     },
 
     update (dt) {
-        if(this.dynamicType == 0)//player
+        if(this.dynamicType == 0)
         {
             if(this.playerMoving)
             {
@@ -100,7 +88,7 @@ cc.Class({
                 {
                     this.leftMoveSeconds -= dt;
                     this.node.setPosition(cc.pLerp(this.moveEnd, this.moveStart, this.leftMoveSeconds / this.playerMoveSeconds));
-                    this.node.parent.parent.setPosition(-this.node.position.x, -this.node.position.y);
+                    this.setBgPosition()
                 }
                 else
                 {
@@ -154,6 +142,11 @@ cc.Class({
         }
     },
 
+    setBgPosition: function()
+    {
+        this.node.parent.parent.setPosition(-this.node.position.x, -this.node.position.y);
+    },
+
     tryMovePlayer: function(dx, dy)
     {
         if(this.playerMoving == false && this.aceeptNewClick)
@@ -171,11 +164,10 @@ cc.Class({
         }
     },
 
-    initialize: function(config, dynParentSpt)
+    initialize: function(config)
     {
-        this.dynParentSpt = dynParentSpt;
         var type = config[0];
-        this.node.getComponent(cc.Sprite).spriteFrame = this.spriteFrames[type];
+        this.setSprite(type);
         this.dynamicType = type;
         switch (type)
         {
@@ -192,84 +184,138 @@ cc.Class({
                 this.setAsGreenSnake(config);
                 break;
         }
+        this.bindAll();
+    },
+
+    setSprite: function(dynamicType)
+    {
+        this.node.getComponent(cc.Sprite).spriteFrame = this.spriteFrames[dynamicType];
+    },
+
+    bindAll: function()
+    {
+        switch (this.dynamicType)
+        {
+            case 0:
+                this.cachePropertyList = ["x", "y", "playerMoving", "aceeptNewClick"];
+                this.canMove = function(dx, dy)
+                {
+                    if(!cc.availablePosMap[(this.x + dx) + "+" + (this.y + dy)])
+                    {
+                        console.log("can't move!");
+                        return false;
+                    }
+                    var nodeList = this.dynParentSpt.dynamicNodeList;
+                    for(var i = 0; i < nodeList.length; i ++)
+                    {
+                        var node = nodeList[i];
+                        var spt = node.getComponent("dynamicNode");
+                        if(node != this.node)
+                        {
+                            if(spt.x == this.x + dx)
+                            {
+                                if(spt.y == this.y + dy)
+                                {
+                                    if(!spt.canMoveByPlayer && !spt.destroyOnPlayerTouch)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    return true;
+                }
+
+                this.touchWith = function(spt)
+                {
+                    if(spt.dynamicType == 3 && this.blinkTime <= 0)
+                    {
+                        console.log("Holy Shit!");
+                        this.blinkTime = 1;
+                    }
+                }
+                this.setInputControl();
+                break;
+            case 1:
+                this.cachePropertyList = ["x", "y", "canMoveByPlayer", "destroyOnPlayerTouch"];
+                this.touchWith = function(spt)
+                {
+                    if(spt.dynamicType == 0)
+                    {
+                        console.log("what happened?");
+                    }
+                }
+                break;
+            case 2:
+                this.cachePropertyList = ["x", "y", "canMoveByPlayer", "destroyOnPlayerTouch"];
+                this.touchWith = function(spt)
+                {
+                    if(spt.dynamicType == 0)
+                    {
+                        console.log("A grass has been destroyed")
+                        this.dynParentSpt.removeNodeFromList(this.node);
+                        this.node.destroy();
+                    }
+                }
+                break;
+            case 3:
+                this.cachePropertyList = ["x", "y", "creepsDirectionX", "creepsDirectionY", "creepsSpeedPerSeconds", "destroyOnPlayerTouch"];
+                this.touchWith = function(spt)
+                {
+                    
+                }
+                this.canMove = function(dx, dy)
+                {
+                    if(!cc.availablePosMap[(this.x + dx) + "+" + (this.y + dy)])
+                    {
+                        return false;
+                    }
+                    var nodeList = this.dynParentSpt.dynamicNodeList;
+                    for(var i = 0; i < nodeList.length; i ++)
+                    {
+                        var node = nodeList[i];
+                        var spt = node.getComponent("dynamicNode");
+                        if(node != this.node)
+                        {
+                            if(spt.x == this.x + dx)
+                            {
+                                if(spt.y == this.y + dy)
+                                {
+                                    if(spt.dynamicType == 1 || spt.dynamicType == 2)
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    return true;
+                }
+                break;
+        }
     },
 
     setAsPlayer: function()
     {
         this.playerMoving = false;
         this.aceeptNewClick = true;
-        this.canMove = function(dx, dy)
-        {
-            if(!cc.availablePosMap[(this.x + dx) + "+" + (this.y + dy)])
-            {
-                console.log("can't move!");
-                return false;
-            }
-            var nodeList = this.dynParentSpt.dynamicNodeList;
-            for(var i = 0; i < nodeList.length; i ++)
-            {
-                var node = nodeList[i];
-                var spt = node.getComponent("dynamicNode");
-                if(node != this.node)
-                {
-                    if(spt.x == this.x + dx)
-                    {
-                        if(spt.y == this.y + dy)
-                        {
-                            if(!spt.canMoveByPlayer && !spt.destroyOnPlayerTouch)
-                            {
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        this.touchWith = function(spt)
-        {
-            if(spt.dynamicType == 3 && this.blinkTime <= 0)
-            {
-                console.log("Holy Shit!");
-                this.blinkTime = 1;
-            }
-        }
-        this.setInputControl();
+        
+        
     },
 
     setAsWall: function()
     {
         this.canMoveByPlayer = false;
-        this.destroyOnPlayerTouch = false;
-        this.autoFalling = false;
-        this.moveTarget = null;
-        this.touchWith = function(spt)
-        {
-            if(spt.dynamicType == 0)
-            {
-                console.log("what happened?");
-            }
-        }
+        this.destroyOnPlayerTouch = false;               
     },
 
     setAsGrass: function()
     {
         this.canMoveByPlayer = false;
-        this.destroyOnPlayerTouch = true;
-        this.autoFalling = false;
-        this.moveTarget = null;
-        this.touchWith = function(spt)
-        {
-            if(spt.dynamicType == 0)
-            {
-                
-                console.log("A grass has been destroyed")
-                this.dynParentSpt.removeNodeFromList(this.node);
-                this.node.destroy();
-            }
-        }
+        this.destroyOnPlayerTouch = true;      
     },
 
     setAsGreenSnake: function(config)
@@ -281,49 +327,12 @@ cc.Class({
         this.creepsDirectionX = config[3];
         this.creepsDirectionY = config[4];
         this.creepsSpeedPerSeconds = 104;
-        this.touchWith = function(spt)
-        {
-            
-        },
-        this.canMove = function(dx, dy)
-        {
-            if(!cc.availablePosMap[(this.x + dx) + "+" + (this.y + dy)])
-            {
-                return false;
-            }
-            var nodeList = this.dynParentSpt.dynamicNodeList;
-            for(var i = 0; i < nodeList.length; i ++)
-            {
-                var node = nodeList[i];
-                var spt = node.getComponent("dynamicNode");
-                if(node != this.node)
-                {
-                    if(spt.x == this.x + dx)
-                    {
-                        if(spt.y == this.y + dy)
-                        {
-                            if(spt.dynamicType == 1 || spt.dynamicType == 2)
-                            {
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return true;
-        }
-    },
-
-    setAsSavePosition: function(config)
-    {
-
+        
     },
 
     onPlayerMoveDone: function()
     {
         this.node.setPosition(this.moveEnd);
-        //this.node.parent.parent.setPosition(cc.p(-this.playerEndX * 52, -this.playerEndY * 52));
         this.playerMoving = false;
         this.x = this.playerEndX;
         this.y = this.playerEndY;
@@ -333,12 +342,11 @@ cc.Class({
 
     lateUpdate: function(dt)
     {
-        this.checkInEndOfFrame();
+
     },
 
     checkInEndOfFrame: function()
     {
-        //low
         var nodeList = this.dynParentSpt.dynamicNodeList;
         for(var i = 0; i < nodeList.length; i ++)
         {
@@ -366,27 +374,32 @@ cc.Class({
 
     },
 
-    getCacheData: function() //without position
+    getCacheData: function()
     {
         var data = [];
         for(var i = 0; i < this.cachePropertyList.length; i++)
         {
             data.push(this[this.cachePropertyList[i]]);
         }
+        return data;
     },
 
     loadFromCacheData: function(data)
     {
-        for(var i = 0; i < data.length; i++)
+        for(var i = 0; i < this.cachePropertyList.length; i++)
         {
             this[this.cachePropertyList[i]] = data[i];
+        }
+        if(this.dynamicType == 0)
+        {
+            this.setBgPosition();
         }
     },
 
     trySave: function()
     {
         this.dynParentSpt.cacheAllChildData();
-    }
+    },
 
     tryLoad: function()
     {
