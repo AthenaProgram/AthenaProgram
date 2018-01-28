@@ -1,3 +1,5 @@
+var Global = require("Global");
+
 cc.Class({
     extends: cc.Component,
 
@@ -49,14 +51,14 @@ cc.Class({
     },
 
     // use this for initialization
-    onLoad: function () {
+    init: function () {
+        console.log(Global.map_width, Global.map_height);
         this.accLeft = false;
         this.accRight = false;
         this.xSpeed = 0;
         this.setInputControl();
     },
 
-    // called every frame, uncomment this function to activate update callback
     update: function (dt) {
         if (this.accLeft) {
             this.xSpeed -= this.accel * dt;

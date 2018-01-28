@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="90" tileheight="90" infinite="0" nextobjectid="38">
+ <tileset firstgid="1" name="map" tilewidth="90" tileheight="90" tilecount="60" columns="6">
+  <image source="map.png" width="540" height="900"/>
+ </tileset>
+ <layer name="colloctions" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJzt1CEOADAIA0D+w///N08yRybWu4RgampaBQAA/KDHbWXJ1uNvZQG4s70A7yTuaGJnAAAgywEu/QNd
+  </data>
+ </layer>
+ <layer name="stone" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJzt1LENACAIBEAGYv/57DVaGUPkroHiC2g+gpPc7FVUvAkAAPhLTvNWFoCVzgV4r2OfdvwZAADoYwAbFQKV
+  </data>
+ </layer>
+ <objectgroup name="golden">
+  <object id="5" name="g1" gid="46" x="2971" y="1889" width="90" height="90">
+   <properties>
+    <property name="direction" value="left"/>
+    <property name="reward" value="skin1"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="purple">
+  <object id="6" name="p1" gid="48" x="1891" y="1261" width="90" height="90">
+   <properties>
+    <property name="direction" value="left"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="demon">
+  <object id="7" name="d1" gid="50" x="899" y="2781" width="90" height="90"/>
+ </objectgroup>
+ <objectgroup name="battle">
+  <object id="9" name="bs1" gid="57" x="2519" y="449" width="90" height="90">
+   <properties>
+    <property name="slime" value="1,2"/>
+   </properties>
+  </object>
+  <object id="10" name="be1" gid="57" x="1703" y="437" width="90" height="90"/>
+  <object id="31" name="bs1" gid="57" x="1435" y="441" width="90" height="90">
+   <properties>
+    <property name="trigger" value="1"/>
+   </properties>
+  </object>
+  <object id="32" name="be1" gid="57" x="807" y="441" width="90" height="90"/>
+ </objectgroup>
+ <objectgroup name="while">
+  <object id="11" name="w2" gid="47" x="2255" y="357" width="90" height="90">
+   <properties>
+    <property name="direction" value="right"/>
+   </properties>
+  </object>
+  <object id="12" name="w1" gid="47" x="1979" y="357" width="90" height="90">
+   <properties>
+    <property name="direction" value="right"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="gate">
+  <object id="13" name="gate1" gid="45" x="2795" y="2793" width="90" height="90">
+   <properties>
+    <property name="lock" value="1,2"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="trigger">
+  <object id="33" name="t1" gid="51" x="1171" y="537" width="90" height="90"/>
+ </objectgroup>
+ <objectgroup name="lock">
+  <object id="15" name="l1" gid="56" x="2791" y="2605" width="90" height="90">
+   <properties>
+    <property name="key" value="silver"/>
+   </properties>
+  </object>
+  <object id="16" name="l2" gid="55" x="2791" y="2697" width="90" height="90">
+   <properties>
+    <property name="key" value="golden"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="fire">
+  <object id="29" name="f2" gid="54" x="3243" y="1613" width="90" height="90">
+   <properties>
+    <property name="direction" value="left"/>
+   </properties>
+  </object>
+  <object id="30" name="f1" gid="1073741878" x="2965" y="1351" width="90" height="90" rotation="180">
+   <properties>
+    <property name="direction" value="right"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="fire_sea">
+  <object id="35" gid="49" x="2971" y="1165" width="90" height="90"/>
+  <object id="36" gid="49" x="3055" y="1165" width="90" height="90"/>
+  <object id="37" gid="49" x="3151" y="1165" width="90" height="90"/>
+ </objectgroup>
+ <objectgroup name="entrance_exit">
+  <object id="17" name="e0" gid="39" x="-1" y="2157" width="90" height="90"/>
+  <object id="18" name="e1" gid="39" x="635" y="545" width="90" height="90"/>
+  <object id="19" name="e2" gid="39" x="3235" y="2801" width="90" height="90"/>
+ </objectgroup>
+ <objectgroup name="big_treasure">
+  <object id="27" name="bt1" gid="52" x="1971" y="2873" width="90" height="90">
+   <properties>
+    <property name="treasure" value="hammer"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="small_treasure">
+  <object id="21" name="st1" gid="53" x="2431" y="2241" width="90" height="90">
+   <properties>
+    <property name="treasure" value="golden_key"/>
+   </properties>
+  </object>
+  <object id="23" name="st2" gid="53" x="2523" y="2241" width="90" height="90">
+   <properties>
+    <property name="treature" value="silver_key"/>
+   </properties>
+  </object>
+  <object id="24" name="st4" gid="53" x="3147" y="897" width="90" height="90">
+   <properties>
+    <property name="treasure" value="blood"/>
+   </properties>
+  </object>
+  <object id="25" name="st3" gid="53" x="1347" y="2249" width="90" height="90">
+   <properties>
+    <property name="treasure" value="collections"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer name="ground" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJztz7ENACAQA7Ffhv1XZAJqDuRI18drZtZDnXb7FwdHIY5WHK04WnG04mjF0YqjFUcrjlYcrThacbTiaMXRiqMVRyuOVr87zMzM7P1tWIf+YQ==
+  </data>
+ </layer>
+ <layer name="barrier" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJztlkEKwzAMBPOJ9tKecuj/n9gEcjKNbcnSxqEzIAhYWB6QHS1Lm08jevPKfDW12qXHyF7Z4GHbKxJrT1t7f+b7E0mUR++bExGZHkp+nfmOHjvlufG4FjxsNXrfG+8/QeURUR+PGPDI2cfL3T0eWzwD61tmqUiP1xbvxp6jHoo5cT0iy6OWu1bWaoz8v7y5Z3gdZgKHOYhyuPJ+qGb0jPcKDz94nK+V3977aSHbQ0WWhyUiUMztCvDoX1Ng6V1FnwMAAAAA/Ctf5OspPw==
+  </data>
+ </layer>
+ <layer name="save" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJzt1cEJADAIBEHLSf8V2oJI0ARm/gf32wiAGWf7AADf0hAAXtDpUXWjdQAAAAAAdyQgvADJ
+  </data>
+ </layer>
+ <layer name="grass" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJzt17ENADAIAzDe6f8P9gIkOhWBLWUnW4hgupOki653AQDwx8s+tCUBAAB2/kYbOwMAADUXKpcEKw==
+  </data>
+ </layer>
+ <layer name="glass" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJzt1KENAEAIA0DmYf8B8Z+XqHKX1NXUtAoAAACy9ZOtLgB/Kb+bsgMAAADgkgEqsQPx
+  </data>
+ </layer>
+ <objectgroup name="player"/>
+ <layer name="secret_path" width="50" height="50" opacity="0.5">
+  <data encoding="base64" compression="zlib">
+   eJztwzENAAAIA7Dpwr8wnqmANmkCAAAAAFw0DQAAAABfLMuwAHU=
+  </data>
+ </layer>
+</map>
