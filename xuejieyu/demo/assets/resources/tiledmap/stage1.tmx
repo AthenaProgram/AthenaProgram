@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="90" tileheight="90" infinite="0" nextobjectid="38">
+<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="90" tileheight="90" infinite="0" nextobjectid="40">
  <tileset firstgid="1" name="map" tilewidth="90" tileheight="90" tilecount="60" columns="6">
   <image source="map.png" width="540" height="900"/>
  </tileset>
@@ -130,6 +130,10 @@
    </properties>
   </object>
  </objectgroup>
+ <objectgroup name="secret_path">
+  <object id="38" name="sp1" gid="58" x="2609.55" y="2335.91" width="90" height="90"/>
+  <object id="39" name="sp2" gid="58" x="2694.39" y="2335.91" width="90" height="90"/>
+ </objectgroup>
  <layer name="ground" width="50" height="50">
   <data encoding="base64" compression="zlib">
    eJztz7ENACAQA7Ffhv1XZAJqDuRI18drZtZDnXb7FwdHIY5WHK04WnG04mjF0YqjFUcrjlYcrThacbTiaMXRiqMVRyuOVr87zMzM7P1tWIf+YQ==
@@ -153,12 +157,6 @@
  <layer name="glass" width="50" height="50">
   <data encoding="base64" compression="zlib">
    eJzt1KENAEAIA0DmYf8B8Z+XqHKX1NXUtAoAAACy9ZOtLgB/Kb+bsgMAAADgkgEqsQPx
-  </data>
- </layer>
- <objectgroup name="player"/>
- <layer name="secret_path" width="50" height="50" opacity="0.5">
-  <data encoding="base64" compression="zlib">
-   eJztwzENAAAIA7Dpwr8wnqmANmkCAAAAAFw0DQAAAABfLMuwAHU=
   </data>
  </layer>
 </map>
