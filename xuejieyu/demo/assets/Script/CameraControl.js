@@ -33,19 +33,7 @@ cc.Class({
         this.margin_up = (-1) * canvas_height / 2 / scaleY;
         this.margin_down = (-1) * (map_pixel_height - canvas_height / 2 / scaleY);
 
-        console.log(map_pixel_height);
-        console.log(map_pixel_width);
-         /*
-        console.log(canvas_width);
-        console.log(canvas_height);
-        console.log(scaleX);
-        console.log(scaleY);
-        console.log(this.margin_left);
-        console.log(this.margin_right);
-        console.log(this.margin_up);
-        console.log(this.margin_down);
-        console.log("camera onload done!");
-        // */
+        //console.log("camera onload done!");
     },
 
      /*
@@ -59,9 +47,7 @@ cc.Class({
 
     // called every frame, uncomment this function to activate update callback
     updateCamera: function (dt) {
-        // /*
-        // target is player node
-        console.log("before:   " + this.focus.x + "   " + this.focus.y);
+        // target is player node, focus is camera focus node.
         if (this.target.x < this.margin_left) {
             this.focus.x = this.margin_left;
         } else if (this.target.x > this.margin_right) {
@@ -76,13 +62,11 @@ cc.Class({
         } else {
             this.focus.y = this.target.y;
         }
-        console.log("after:   " + this.focus.x + "   " + this.focus.y);
-        // */
+
         let targetPos = this.focus.convertToWorldSpaceAR(cc.Vec2.ZERO);
-        //let targetPos = this.target.convertToWorldSpaceAR(cc.Vec2.ZERO);
-        //console.log(targetPos);
+        //console.log("focus world pos is :" + targetPos);
         this.node.position = this.node.parent.convertToNodeSpaceAR(targetPos);
-        //console.log(this.node.position);
+        //console.log("camera world pos is :" + this.node.position);
         
         //let ratio = targetPos.y / cc.winSize.height;
         //this.camera.zoomRatio = 1 + (0.5 - ratio) * 0.5;

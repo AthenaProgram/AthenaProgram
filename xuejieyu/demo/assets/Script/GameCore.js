@@ -34,6 +34,7 @@ cc.Class({
         this.player_component = this.player.getComponent("Player");
         this.camera_component = this.camera.getComponent("CameraControl");
 
+        Global.tiledmap_load_done = 0;
         cc.loader.loadRes("tiledmap/stage" + id, function(err, map){
             if (err) {
                 console.log("tiledmap load error!");
@@ -43,9 +44,11 @@ cc.Class({
                 self.TranslateMap(tiledmap);
 
                 /* tiledmap load done, then initialize other node */
-                self.player_component.onLoadPlayer();
+                self.player_component.onLoadPlayer(Global.player_skin);
                 self.camera_component.onLoadCamera();
+
                 /* finish game core scene initialization */
+                Global.tiledmap_load_done = 1;
             }
         });
     },
@@ -55,16 +58,15 @@ cc.Class({
     },
 
     update (dt) {
+        if (Global.tiledmap_load_done === 0)
+            return;
         this.player_component.updatePlayer(dt);
         this.camera_component.updateCamera(dt);
     },
 
     TranslateMap: function (TiledMap) { // this is tiledmap translator.
-        // init map location
-        //this.node.setPosition(cc.visibleRect.bottomLeft);
 
-        //console.log(TiledMap);
-        //console.log(this.node);
+       //console.log(TiledMap);
 
         // get map size
         var mapSize = TiledMap.getMapSize();
@@ -101,7 +103,6 @@ cc.Class({
         console.log(st1, e0);
         console.log('//////////////////////////////////');
         */
-        console.log(Global);
     },
 
     PixelToTile: function (point) { // object offset in tiledmap is left-bottom coor.

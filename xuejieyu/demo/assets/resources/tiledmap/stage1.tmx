@@ -136,7 +136,7 @@
  </objectgroup>
  <layer name="ground" width="50" height="50">
   <data encoding="base64" compression="zlib">
-   eJztz7ENACAQA7Ffhv1XZAJqDuRI18drZtZDnXb7FwdHIY5WHK04WnG04mjF0YqjFUcrjlYcrThacbTiaMXRiqMVRyuOVr87zMzM7P1tWIf+YQ==
+   eJztz0ERACAMwLCZmQH8i8NG4PrIv92Z2ccdoKGPPlR9WPqw9GHpw9KHpQ9LH5Y+LH1Y+rD0YenD0oelD0sflj4sfVj6sPRh6cPSh6UPy/nIBXFZbms=
   </data>
  </layer>
  <layer name="barrier" width="50" height="50">

@@ -347,9 +347,7 @@
       "__id__": 7
     },
     "_enabled": true,
-    "_spriteFrame": {
-      "__uuid__": "2190f7d5-fcd1-451e-9c6b-5ac0f16deec0"
-    },
+    "_spriteFrame": null,
     "_type": 0,
     "_sizeMode": 0,
     "_fillType": 0,
@@ -366,17 +364,19 @@
     "_atlas": null
   },
   {
-    "__type__": "68165KnkBBG34jePMwNt/pZ",
+    "__type__": "6ff3fwReOJNBoX6ORHWR0x2",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 7
     },
     "_enabled": true,
-    "tileX": 0,
-    "tileY": 0,
+    "tileX": null,
+    "tileY": null,
+    "orientation": null,
     "maxMoveSpeed": 500,
-    "accel": 500
+    "accel": 10000,
+    "sprite": null
   },
   {
     "__type__": "cc.Node",

@@ -4,4 +4,6 @@ module.exports = {
     map_height : null,
     tile_size : null,
     player_reborn_location : null, // born and reborn location
+    player_skin : "miku",
+    tiledmap_load_done : null,
 }
